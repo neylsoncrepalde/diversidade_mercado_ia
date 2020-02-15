@@ -84,4 +84,5 @@ def obter_dados():
 
 
 if __name__ == "__main__":
+    print("Obtendo dados da RAIS...")
     obter_dados()
