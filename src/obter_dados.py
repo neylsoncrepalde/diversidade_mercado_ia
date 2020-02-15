@@ -66,7 +66,7 @@ def importa_filtra(url):
     archive.extractall(path="../data/raw/")
     archive.close()
     os.remove(filename)
-    file = "../data/" + filename[13:-2] + "txt"
+    file = filename[:-2] + "txt"
     df = dd.read_csv(file, sep=';', encoding="latin1", assume_missing=True,
                         dtype={'CBO Ocupação 2002': 'object',
                                 'Faixa Remun Dezem (SM)': 'object',
@@ -74,7 +74,7 @@ def importa_filtra(url):
                                 'Faixa Etária': 'object'})
     df = df.loc[(df["CNAE 2.0 Classe"] >= 62000) & (df["CNAE 2.0 Classe"] < 62050) ,:]
     computed_df = df.compute()
-    computed_df.to_csv(file[:-3] + "csv", sep="\t", index=False)
+    computed_df.to_csv("../data/" + file[13:-3] + "csv", sep="\t", index=False)
     os.remove(file)
 
 
