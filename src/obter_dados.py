@@ -1,10 +1,10 @@
-from io import BytesIO
-from zipfile import ZipFile
-from urllib.request import urlopen
+import wget
+import py7zr
 from tqdm import tqdm
 import dask.dataframe as dd
+import os
 
-links = [
+urls = [
     #2018
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2018/RAIS_VINC_PUB_SP.7z",
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2018/RAIS_VINC_PUB_MG_ES_RJ.7z",
@@ -60,19 +60,28 @@ links = [
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2008/RJ2008.7z"    
 ]
 
-def obter_rais(url):
-    resp = urlopen(url)
-    zipfile = ZipFile(BytesIO(resp.read()))
-    with zipfile.namelist() as file:
-        try:
-            df = dd.read_csv(file, sep=';', encoding="latin1", 
-                            dtype={'CBO Ocupação 2002': 'object'})
-        except:
-            print("Houve erro na importação de ", file)
-            return None
-        df = df.loc[(df["CNAE 2.0 Classe"] >= 62000) & (df["CNAE 2.0 Classe"] < 62050) ,:]
-        computed_df = df.compute()
-        computed_df.to_csv("../data/" + file[:-3] + "csv", sep="\t", index=False)
+def importa_filtra(url):
+    filename = wget.download(url,out="../data/raw/")
+    archive = py7zr.SevenZipFile(filename)
+    archive.extractall(path="../data/raw/")
+    archive.close()
+    os.remove(filename)
+    file = "../data/" + filename[13:-2] + "txt"
+    df = dd.read_csv(file, sep=';', encoding="latin1", assume_missing=True,
+                        dtype={'CBO Ocupação 2002': 'object',
+                                'Faixa Remun Dezem (SM)': 'object',
+                                'Faixa Tempo Emprego': 'object',
+                                'Faixa Etária': 'object'})
+    df = df.loc[(df["CNAE 2.0 Classe"] >= 62000) & (df["CNAE 2.0 Classe"] < 62050) ,:]
+    computed_df = df.compute()
+    computed_df.to_csv(file[:-3] + "csv", sep="\t", index=False)
+    os.remove(file)
+
+
+def obter_dados():
+    for url in tqdm(urls):
+        importa_filtra(url)
+
 
 if __name__ == "__main__":
-    obter_rais("ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2009/ES2009.7z")
+    obter_dados()
