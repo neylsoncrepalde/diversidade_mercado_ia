@@ -2,6 +2,7 @@ import wget
 import py7zr
 from tqdm import tqdm
 import dask.dataframe as dd
+import pandas as pd
 import os
 
 urls = [
@@ -47,7 +48,7 @@ urls = [
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2010/SP2010.7z",
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2010/MG2010.7z",
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2010/ES2010.7z",
-    "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2010/RJ2010.7z",
+    #"ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2010/RJ2010.7z",
     #2009
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2009/SP2009.7z",
     "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2009/MG2009.7z",
@@ -67,11 +68,35 @@ def importa_filtra(url):
     archive.close()
     os.remove(filename)
     file = filename[:-2] + "txt"
-    df = dd.read_csv(file, sep=';', encoding="latin1", assume_missing=True,
+    if url == "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2008/SP2008.7z":
+        df = dd.read_csv(file, sep=';', encoding="latin1", assume_missing=True,
                         dtype={'CBO Ocupação 2002': 'object',
                                 'Faixa Remun Dezem (SM)': 'object',
                                 'Faixa Tempo Emprego': 'object',
-                                'Faixa Etária': 'object'})
+                                'Faixa Etária': 'object',
+                                'Bairros SP': 'object',
+                                'Distritos SP': 'object',
+                                'Bairros RJ': 'object',
+                                'Raça Cor': 'object',
+                                'Natureza Jurídica': 'object',
+                                'CNAE 2.0 Subclasse': 'object',
+                                'Tipo Defic': 'object',
+                                'CNAE 2.0 Classe': 'object',
+                                'CNAE 95 Classe': 'object'})
+        df['CNAE 2.0 Classe'] = df['CNAE 2.0 Classe'].apply(pd.to_numeric, errors='coerce')
+    else:
+        df = dd.read_csv(file, sep=';', encoding="latin1", assume_missing=True,
+                        dtype={'CBO Ocupação 2002': 'object',
+                                'Faixa Remun Dezem (SM)': 'object',
+                                'Faixa Tempo Emprego': 'object',
+                                'Faixa Etária': 'object',
+                                'Bairros SP': 'object',
+                                'Distritos SP': 'object',
+                                'Bairros RJ': 'object',
+                                'Raça Cor': 'object',
+                                'Natureza Jurídica': 'object',
+                                'CNAE 2.0 Subclasse': 'object',
+                                'Tipo Defic': 'object'})
     df = df.loc[(df["CNAE 2.0 Classe"] >= 62000) & (df["CNAE 2.0 Classe"] < 62050) ,:]
     computed_df = df.compute()
     computed_df.to_csv("../data/" + file[13:-3] + "csv", sep="\t", index=False)
@@ -82,6 +107,7 @@ def obter_dados():
     for url in tqdm(urls):
         importa_filtra(url)
 
+# Lembrar de setar '00000-1' como missing em CNAE 2.0 Subclasse
 
 if __name__ == "__main__":
     print("Obtendo dados da RAIS...")
