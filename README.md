@@ -26,21 +26,29 @@ cd diversidade_mercado_ia
 pip install -r requirements.txt
 ```
 
-## 1 - Obtendo os dados
+## 1 - Crie as pastas necessárias para armazenar os dados
+
+```bash
+mkdir data
+mkdir data/raw
+mkdir data/processed
+```
+
+## 2 - Obtendo os dados
 
 ```bash
 cd src
 python obter_dados.py
 ```
 
-## 2 - Limpando e organizando os dados
+## 3 - Limpando e organizando os dados
 
 ```bash
 python limpa_dados.py
 ```
 
 
-## 3 - Análises
+## 4 - Análises
 
 Abra no jupyter notebook ou o jupyter lab e comece as análises.
 
