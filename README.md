@@ -8,7 +8,7 @@ Para elaborar o estudo, utilizamos como fontes de dados a RAIS dos estados SP, M
 
 # Como reproduzir o estudo
 
-Primeiro, clone este repositório git em sua máquina:
+Primeiro, abra um terminal (ou cmd no windows) e clone este repositório git em sua máquina:
 
 ```bash
 git clone https://github.com/neylsoncrepalde/diversidade_mercado_ia.git
