@@ -29,7 +29,7 @@ def executa_limpeza():
         'Ano', 'CNAE 2.0 Classe', 
        'Escolaridade após 2005', 'Qtd Hora Contr', 'Idade',
        'Ind Simples',
-       'Mun Trab', 'Município', 'Nacionalidade', 'Natureza Jurídica',
+       'Mun Trab', 'Município', 'Nacionalidade','Brasileiro', 'Natureza Jurídica',
        'Ind Portador Defic', 'Qtd Dias Afastamento', 'Raça Cor',
        'Regiões Adm DF', 'Vl Remun Dezembro Nom', 'Vl Remun Dezembro (SM)',
        'Vl Remun Média Nom', 'Vl Remun Média (SM)', 'CNAE 2.0 Subclasse',
