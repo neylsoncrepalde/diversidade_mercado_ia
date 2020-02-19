@@ -36,7 +36,7 @@ python obter_dados.py
 ## 2 - Limpando e organizando os dados
 
 ```bash
-Codando...
+python limpa_dados.py
 ```
 
 
