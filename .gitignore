@@ -1,2 +1,7 @@
 docs/
 data/
+src/__pycache__/
+src/.ipynb_checkpoints/
+.vscode/
+.Rproj.user/
+.ipynb_checkpoints/
