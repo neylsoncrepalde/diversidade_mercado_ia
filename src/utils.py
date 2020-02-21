@@ -1,4 +1,9 @@
 import sys
+import requests
+import json
+import pandas as pd
+import numpy as np
+from io import StringIO
 
 PERGUNTA = "Você gostaria de deletar os dados não processados da RAIS do seu computador?"
 
@@ -33,3 +38,16 @@ def query_yes_no(question, default="no"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
+
+            
+def deflate(nominal_values, nominal_dates, real_date, index='ipca'):
+    nominal_values = np.array(nominal_values)
+    if index == 'ipca':
+        res = requests.get("http://ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PRECOS12_IPCA12')")
+        indice = pd.DataFrame.from_dict(json.load(StringIO(res.text))['value'])
+        indice['VALDATA'] = pd.to_datetime(indice['VALDATA'], utc=True).dt.date.astype(str)
+        
+    # Calculate changes in prices
+    indice['indx'] = indice.VALVALOR[indice.VALDATA == real_date].values / indice.VALVALOR.values
+    
+    return (indice.loc[indice.VALDATA.isin(nominal_dates),'indx'] * nominal_values).values
